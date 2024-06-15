@@ -1,1 +1,13 @@
 @import "primeicons/primeicons.css";
+
+.d-flex{
+    display: flex;
+}
+
+.justify-around{
+    justify-content: space-around;
+}
+
+.d-col{
+    flex-direction: column;
+}

@@ -1,44 +1,20 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import Button from 'primevue/button'
-import { ref } from 'vue'
-import InputNumber from 'primevue/inputnumber'
-
-const max = 999;
-const scores = ref([
-  { id: 1, name: 'Jean', scores: [{ val: undefined }, { val: undefined }], total: 0 },
-  { id: 2, name: 'Paul', scores: [{ val: undefined }, { val: undefined }], total: 0 },
-  { id: 3, name: 'Mattéo', scores: [{ val: undefined }, { val: undefined }], total: 0 }
-])
-
-const computeTotals = (id: number) => {
-  const playerScore = scores.value.find((item) => item.id === id)
-  if (playerScore) {
-    let total = 0
-    console.log(playerScore)
-    playerScore.scores.forEach((item) => {
-      if (item.val) total += item.val
-      console.log(total, item.val)
-    })
-    playerScore.total = total
-  }
-}
-
-function addColumn() {
-  scores.value.forEach((item) => {
-    item.scores.push({ val: undefined })
-  })
-}
 
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
+    <div>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+      <nav class="d-flex justify-around">
+        <RouterLink to="/">
+          <Button label="Home" link :style="{'font-size':'20px'}"/>
+        </RouterLink>
+        <RouterLink to="/podium">
+          <Button label="Podium" link :style="{'font-size':'20px'}"/>
+        </RouterLink>
       </nav>
     </div>
   </header>

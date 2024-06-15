@@ -8,35 +8,37 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
 const MAX = 999
+const MIN = -9
 const SCORES_KEY = 'scores'
 const scoreLength = ref<number>(1)
 const scoreList = ref<Score[]>([])
 
-onMounted(()=>{
+onMounted(() => {
   const scores = localStorage.getItem(SCORES_KEY)
   if (scores) {
     scoreList.value = JSON.parse(scores)
     scoreLength.value = scoreList.value[0]?.scores.length || 1
-  }else{
+  } else {
     initialBasicGame()
   }
 })
 
-const canAddTour = computed(()=>{
-  let bool = true;
+const canAddTour = computed(() => {
+  let bool = true
   scoreList.value.forEach((item) => {
-    if (item.scores[scoreLength.value - 1].val === undefined) bool = false;
+    if (item.scores[scoreLength.value - 1].val === undefined) bool = false
   })
   return bool
 })
 
-function initialBasicGame(){
-  scoreList.value =[
+function initialBasicGame() {
+  scoreList.value = [
     { id: 0, name: '', scores: [{ val: undefined }], total: 0 },
-    { id: 1, name: '', scores: [{ val: undefined }], total: 0 },
+    { id: 1, name: '', scores: [{ val: undefined }], total: 0 }
   ]
   scoreLength.value = 1
 }
+
 const computeTotals = (id: number) => {
   const playerScore = scoreList.value.find((item) => item.id === id)
   if (playerScore) {
@@ -64,11 +66,11 @@ function addPlayer() {
   })
 }
 
-function orderList(){
+function orderList() {
   scoreList.value = scoreList.value.slice().sort((a, b) => b.total - a.total)
 }
 
-function saveScores(){
+function saveScores() {
   localStorage.removeItem(SCORES_KEY)
   scoreList.value = []
   scoreLength.value = 1
@@ -83,31 +85,55 @@ watch(scoreList, (newValue) => {
 
 <template>
   <main>
-    <DataTable :value="scoreList" tableStyle="min-width: 50rem" style="padding: 40px">
-      <Column field="name" header="Name">
-        <template #body="slotProps">
-          <InputText type="text" v-model="slotProps.data.name" />
-          <!--<Button icon="pi pi-check" />-->
-        </template>
-      </Column>
-      <Column v-for="( score, columnIndex ) in scoreLength" :key="columnIndex" field="name" :header="'Manche ' + score">
-        <template #body="slotProps">
-          <InputNumber v-model="slotProps.data.scores[columnIndex].val"
-                       :inputStyle="{width:'50px', margin:'0px 10px'}"
-                       input-class="space"
-                       :max="MAX"
-          />
-        </template>
-      </Column>
-      <Column field="total" header="Total" :style="{width:'50px'}">
-        <template #body="slotProps">
-          <InputNumber v-model="slotProps.data.total" disabled :inputStyle="{width:'60px'}" />
-        </template>
-      </Column>
-    </DataTable>
-    <Button severity="danger" label="Tour supplémentaire" @click="addColumn" :disabled="!canAddTour"></Button>
-    <Button severity="danger" label="Joueur supplémentaire" @click="addPlayer"></Button>
-    <Button severity="danger" label="Order list" @click="orderList"></Button>
-    <Button severity="danger" label="Clear scores" @click="saveScores"></Button>
+    <div class="space">
+      <DataTable :value="scoreList" scrollable>
+        <Column field="name" header="Nom" frozen :style="{'z-index': 1, 'background': '#121212'}">
+          <template #body="slotProps">
+            <InputText type="text" v-model="slotProps.data.name"
+                       :style="{width:'120px'}"
+            />
+          </template>
+        </Column>
+        <Column v-for="( score, columnIndex ) in scoreLength"
+                :key="columnIndex" field="name"
+        >
+          <template #header>
+            <span :style="{width:'50px', 'text-align':'center'}">Tour {{ score }}</span>
+          </template>
+          <template #body="slotProps">
+            <div :style="{ display: 'flex', 'justify-content':'center'}">
+              <InputNumber v-model="slotProps.data.scores[columnIndex].val"
+                           :inputStyle="{width:'50px'}"
+                           input-class="space"
+                           :max="MAX"
+                           :min="MIN"
+              />
+            </div>
+          </template>
+        </Column>
+        <Column field="total" header="Total">
+          <template #body="slotProps">
+            <InputNumber v-model="slotProps.data.total" disabled :inputStyle="{width:'60px'}" />
+          </template>
+        </Column>
+      </DataTable>
+      <div class="d-flex d-col" :style="{gap:'15px', padding:'20px 10px'}">
+        <Button severity="contrast" label="Tour supplémentaire" @click="addColumn" :disabled="!canAddTour"></Button>
+        <Button severity="contrast" label="Joueur supplémentaire" @click="addPlayer"></Button>
+        <Button severity="contrast" label="Trié la liste" @click="orderList"></Button>
+        <Button severity="contrast" label="Clear scores" @click="saveScores"></Button>
+      </div>
+    </div>
   </main>
 </template>
+<style>
+@media (min-width: 450px) {
+  .space {
+    padding: 40px;
+  }
+}
+
+.space {
+  padding: 8px;
+}
+</style>
