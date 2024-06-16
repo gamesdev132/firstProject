@@ -6,6 +6,8 @@ import type { Score } from '@/interface/score.interface'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { addGame } from '@/services/score.service'
+import { Timestamp } from 'firebase/firestore';
 
 const MAX = 999
 const MIN = -9
@@ -70,7 +72,10 @@ function orderList() {
   scoreList.value = scoreList.value.slice().sort((a, b) => b.total - a.total)
 }
 
-function saveScores() {
+async function saveScores() {
+  await addGame({gameName: 'hilo', date: Timestamp.now() ,scores: scoreList.value.map((item) => {
+      return {name: item.name, total: item.total}
+    })});
   localStorage.removeItem(SCORES_KEY)
   scoreList.value = []
   scoreLength.value = 1
@@ -121,7 +126,7 @@ watch(scoreList, (newValue) => {
         <Button severity="contrast" label="Tour supplémentaire" @click="addColumn" :disabled="!canAddTour"></Button>
         <Button severity="contrast" label="Joueur supplémentaire" @click="addPlayer"></Button>
         <Button severity="contrast" label="Trié la liste" @click="orderList"></Button>
-        <Button severity="contrast" label="Clear scores" @click="saveScores"></Button>
+        <Button severity="contrast" label="Enregistrer les scores" @click="saveScores"></Button>
       </div>
     </div>
   </main>
