@@ -11,5 +11,4 @@ export async function fetchItems(){
 
 export async function addGame(game : Game){
   await addDoc(collection(db, 'score'), game);
-  console.log(await fetchItems());
 }

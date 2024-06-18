@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import AddGameDialog from '@/components/AddGameDialog.vue'
+import type { Score } from '@/interface/score.interface'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
-import { computed, onMounted, ref, watch } from 'vue'
-import type { Score } from '@/interface/score.interface'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import { addGame } from '@/services/score.service'
-import { Timestamp } from 'firebase/firestore';
+import DynamicDialog from 'primevue/dynamicdialog'
+import { useDialog } from 'primevue/usedialog'
+import type { DynamicDialogCloseOptions } from 'primevue/dynamicdialogoptions'
+import { computed, onMounted, ref, watch } from 'vue'
+
+const dialog = useDialog()
 
 const MAX = 999
 const MIN = -9
@@ -15,6 +19,26 @@ const SCORES_KEY = 'scores'
 const scoreLength = ref<number>(1)
 const scoreList = ref<Score[]>([])
 
+const openAddGameDialog = () => {
+  dialog.open(AddGameDialog, {
+    props: {
+      header: 'Ajouter une partie'
+    },
+    data: {
+      scoreList: scoreList.value.map((item) => {
+        return { name: item.name, total: item.total }
+      })
+    },
+    onClose(options?: DynamicDialogCloseOptions) {
+      if (options && options.data.success) {
+        localStorage.removeItem(SCORES_KEY)
+        scoreList.value = []
+        scoreLength.value = 1
+        initialBasicGame()
+      }
+    }
+  })
+}
 onMounted(() => {
   const scores = localStorage.getItem(SCORES_KEY)
   if (scores) {
@@ -61,7 +85,7 @@ function addColumn() {
 
 function addPlayer() {
   scoreList.value.push({
-    id: scoreLength.value,
+    id: scoreList.value.length,
     name: '',
     scores: Array.from({ length: scoreLength.value }, () => ({ val: undefined })),
     total: 0
@@ -72,14 +96,8 @@ function orderList() {
   scoreList.value = scoreList.value.slice().sort((a, b) => b.total - a.total)
 }
 
-async function saveScores() {
-  await addGame({gameName: 'hilo', date: Timestamp.now() ,scores: scoreList.value.map((item) => {
-      return {name: item.name, total: item.total}
-    })});
-  localStorage.removeItem(SCORES_KEY)
-  scoreList.value = []
-  scoreLength.value = 1
-  initialBasicGame()
+function deleteNoNamePlayers() {
+  scoreList.value = scoreList.value.filter(item => item.name.trim() !== '' && item.scores[0].val !== undefined)
 }
 
 watch(scoreList, (newValue) => {
@@ -90,6 +108,7 @@ watch(scoreList, (newValue) => {
 
 <template>
   <main>
+    <DynamicDialog />
     <div class="space">
       <DataTable :value="scoreList" scrollable>
         <Column field="name" header="Nom" frozen :style="{'z-index': 1, 'background': '#121212'}">
@@ -101,6 +120,7 @@ watch(scoreList, (newValue) => {
         </Column>
         <Column v-for="( score, columnIndex ) in scoreLength"
                 :key="columnIndex" field="name"
+                :style="{width:'80px'}"
         >
           <template #header>
             <span :style="{width:'50px', 'text-align':'center'}">Tour {{ score }}</span>
@@ -116,7 +136,9 @@ watch(scoreList, (newValue) => {
             </div>
           </template>
         </Column>
-        <Column field="total" header="Total">
+        <Column field="total" header="Total"
+                :style="{width:'80px'}"
+        >
           <template #body="slotProps">
             <InputNumber v-model="slotProps.data.total" disabled :inputStyle="{width:'60px'}" />
           </template>
@@ -126,7 +148,8 @@ watch(scoreList, (newValue) => {
         <Button severity="contrast" label="Tour supplémentaire" @click="addColumn" :disabled="!canAddTour"></Button>
         <Button severity="contrast" label="Joueur supplémentaire" @click="addPlayer"></Button>
         <Button severity="contrast" label="Trié la liste" @click="orderList"></Button>
-        <Button severity="contrast" label="Enregistrer les scores" @click="saveScores"></Button>
+        <Button severity="contrast" label="Supprimer joueurs sans nom" @click="deleteNoNamePlayers"></Button>
+        <Button severity="contrast" label="Enregistrer les scores" @click="openAddGameDialog"></Button>
       </div>
     </div>
   </main>
