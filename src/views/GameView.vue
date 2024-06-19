@@ -22,7 +22,8 @@ const scoreList = ref<Score[]>([])
 const openAddGameDialog = () => {
   dialog.open(AddGameDialog, {
     props: {
-      header: 'Ajouter une partie'
+      header: 'Ajouter une partie',
+      modal: true
     },
     data: {
       scoreList: scoreList.value.map((item) => {
@@ -30,7 +31,7 @@ const openAddGameDialog = () => {
       })
     },
     onClose(options?: DynamicDialogCloseOptions) {
-      if (options && options.data.success) {
+      if (options && options.data && options.data.success) {
         localStorage.removeItem(SCORES_KEY)
         scoreList.value = []
         scoreLength.value = 1

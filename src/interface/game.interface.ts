@@ -1,10 +1,8 @@
+import type { Timestamp } from 'firebase/firestore'
+import type { ScoreItem } from '@/interface/score-item.interface'
+
 export interface Game {
-  date: any,
+  date: Timestamp,
   gameName: string,
   scores: ScoreItem[]
-}
-
-export interface ScoreItem{
-  name: string,
-  total: number,
 }
