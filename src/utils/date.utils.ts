@@ -41,3 +41,7 @@ export function getAllTimeStampsInRange(startDate: Timestamp, endDate: Timestamp
 
   return timestamps;
 }
+
+export function convertTimestampToFrenchFormat(timeStamp: Timestamp){
+  return convertDateToFrenchFormat(new Date(timeStamp.toDate()))
+}

@@ -6,12 +6,15 @@ import { getCurrentDateMinusDaysFormatted, getAllTimeStampsInRange } from '@/uti
 const scoreCollection = collection(db, 'score')
 const DATES_SPACE = 5
 
-export async function fetchItems() {
-  const querySnapshot = await getDocs(scoreCollection)
-  return querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }))
+export async function getGamesFromLastXDays(days= 31): Promise<Game[]> {
+  const startDate: Timestamp = getCurrentDateMinusDaysFormatted(-days)
+  const querySnapshot = await getDocs(query(
+    scoreCollection,
+    where('date', '>=', startDate),
+  ))
+  return querySnapshot.docs.map(doc => (
+    doc.data() as Game
+  ))
 }
 
 export async function addGame(game: Game) {

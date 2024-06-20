@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import RecentGames from '@/components/podium/RecentGames.vue'
+</script>
+
 <template>
   <div class="about">
-    <h1>Comming soon...(non)</h1>
+    <RecentGames></RecentGames>
   </div>
 </template>
 

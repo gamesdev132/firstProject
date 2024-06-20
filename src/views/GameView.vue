@@ -20,6 +20,7 @@ const scoreLength = ref<number>(1)
 const scoreList = ref<Score[]>([])
 
 const openAddGameDialog = () => {
+  orderList();
   dialog.open(AddGameDialog, {
     props: {
       header: 'Ajouter une partie',
@@ -94,7 +95,7 @@ function addPlayer() {
 }
 
 function orderList() {
-  scoreList.value = scoreList.value.slice().sort((a, b) => b.total - a.total)
+  scoreList.value = scoreList.value.slice().sort((a, b) => a.total - b.total)
 }
 
 function deleteNoNamePlayers() {
