@@ -1,7 +1,34 @@
 @import "primeicons/primeicons.css";
 
+
+
+:root {
+    --background: white;
+    --text-color: #121212;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #121212;
+        --text-color: white;
+    }
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text-color);
+}
+
 .d-flex{
     display: flex;
+}
+
+.items-start{
+    align-items: baseline !important;
+}
+
+.wrap{
+    flex-wrap:wrap;
 }
 
 .justify-around{

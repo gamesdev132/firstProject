@@ -1,5 +1,5 @@
 import { db } from '@/firebase'
-import { addDoc, collection, getDocs, query, Timestamp, where } from 'firebase/firestore'
+import { addDoc, collection, getDocs, query, Timestamp, where, orderBy } from 'firebase/firestore'
 import type { Game } from '@/interface/game.interface'
 import { getCurrentDateMinusDaysFormatted, getAllTimeStampsInRange } from '@/utils/date.utils'
 
@@ -11,6 +11,7 @@ export async function getGamesFromLastXDays(days= 31): Promise<Game[]> {
   const querySnapshot = await getDocs(query(
     scoreCollection,
     where('date', '>=', startDate),
+    orderBy('date', 'desc'),
   ))
   return querySnapshot.docs.map(doc => (
     doc.data() as Game

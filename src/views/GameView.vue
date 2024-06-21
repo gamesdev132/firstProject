@@ -20,7 +20,7 @@ const scoreLength = ref<number>(1)
 const scoreList = ref<Score[]>([])
 
 const openAddGameDialog = () => {
-  orderList();
+  orderList()
   dialog.open(AddGameDialog, {
     props: {
       header: 'Ajouter une partie',
@@ -55,6 +55,14 @@ const canAddTour = computed(() => {
   let bool = true
   scoreList.value.forEach((item) => {
     if (item.scores[scoreLength.value - 1].val === undefined) bool = false
+  })
+  return bool
+})
+
+const canCreateGame = computed(() => {
+  let bool = true
+  scoreList.value.forEach((item) => {
+    if (item.scores[0].val === undefined || item.name === '') bool = false
   })
   return bool
 })
@@ -113,7 +121,7 @@ watch(scoreList, (newValue) => {
     <DynamicDialog />
     <div class="space">
       <DataTable :value="scoreList" scrollable>
-        <Column field="name" header="Nom" frozen :style="{'z-index': 1, 'background': '#121212'}">
+        <Column field="name" header="Nom" frozen :style="{'z-index': 1}" class="list-background-color">
           <template #body="slotProps">
             <InputText type="text" v-model="slotProps.data.name"
                        :style="{width:'120px'}"
@@ -151,12 +159,18 @@ watch(scoreList, (newValue) => {
         <Button severity="contrast" label="Joueur supplémentaire" @click="addPlayer"></Button>
         <Button severity="contrast" label="Trié la liste" @click="orderList"></Button>
         <Button severity="contrast" label="Supprimer joueurs sans nom" @click="deleteNoNamePlayers"></Button>
-        <Button severity="contrast" label="Enregistrer les scores" @click="openAddGameDialog"></Button>
+        <Button severity="contrast" label="Enregistrer les scores" @click="openAddGameDialog"
+                :disabled="!canCreateGame"></Button>
       </div>
     </div>
   </main>
 </template>
 <style>
+.list-background-color {
+  background-color: var(--background);
+  color: var(--text-color);
+}
+
 @media (min-width: 450px) {
   .space {
     padding: 40px;

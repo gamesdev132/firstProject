@@ -4,14 +4,13 @@ import { convertTimestampToFrenchFormat } from '@/utils/date.utils'
 
 const props = defineProps(['game'])
 
-const aleaEmojis = ['🤯', '🤔', '👹', '🤯', '😬']
+const aleaEmojis = ['🤯', '🤔', '👹', '😴', '😵', '☠️']
 
-let emojis = ['🥇', '🥈', '🥉'].concat(Array(props.game.scores.length - 3).fill(aleaEmojis[Math.floor(Math.random() * 6)]))
-
+const emojis = ['🥇', '🥈', '🥉'].concat(Array(props.game.scores.length - 3).fill(aleaEmojis[Math.floor(Math.random() * 6)]))
 </script>
 
 <template>
-  <Card v-if="game">
+  <Card v-if="game" class="card-margin">
     <template #title>{{ convertTimestampToFrenchFormat(props.game.date) + ' - ' + props.game.gameName }}</template>
     <template #content>
       <div class="d-flex d-col">
@@ -25,5 +24,7 @@ let emojis = ['🥇', '🥈', '🥉'].concat(Array(props.game.scores.length - 3)
 </template>
 
 <style scoped>
-
+.card-margin{
+  margin: 20px;
+}
 </style>

@@ -7,13 +7,12 @@ import Button from 'primevue/button'
 <template>
   <header>
     <div>
-
       <nav class="d-flex justify-around">
         <RouterLink to="/">
-          <Button label="Home" link :style="{'font-size':'20px'}"/>
+          <Button label="Derniers scores" link :style="{'font-size':'20px'}"/>
         </RouterLink>
-        <RouterLink to="/podium">
-          <Button label="Podium" link :style="{'font-size':'20px'}"/>
+        <RouterLink to="/new">
+          <Button label="Nouvelle partie" link :style="{'font-size':'20px'}"/>
         </RouterLink>
       </nav>
     </div>
@@ -23,20 +22,4 @@ import Button from 'primevue/button'
 </template>
 
 <style scoped>
-.d-flex {
-  display: flex;
-}
-
-.list-item{
-  padding: 10px;
-}
-
-.space{
-  padding: 20px;
-}
-
-.val {
-  height: 100px;
-  width: 50px !important;
-}
 </style>
