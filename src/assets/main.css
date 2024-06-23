@@ -1,6 +1,6 @@
 @import "primeicons/primeicons.css";
-
-
+@import "flex.css";
+@import "spacing.css";
 
 :root {
     --background: white;
@@ -19,34 +19,10 @@ body {
     color: var(--text-color);
 }
 
-.d-flex{
-    display: flex;
+.z-1{
+    z-index: 1;
 }
 
-.items-start{
-    align-items: baseline !important;
-}
-
-.wrap{
-    flex-wrap:wrap;
-}
-
-.justify-around{
-    justify-content: space-around;
-}
-
-.justify-end{
-    justify-content: flex-end;
-}
-
-.d-col{
-    flex-direction: column;
-}
-
-.pt-2{
-    padding-top: 2vh;
-}
-
-.pb-1{
-    padding-bottom: 1vh;
+.font-size-20{
+    font-size: 20px !important;
 }

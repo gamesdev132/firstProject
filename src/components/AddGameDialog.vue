@@ -60,8 +60,14 @@ async function getDates(): Promise<Timestamp[]> {
     <label for="username" class="pb-1">Nom du jeu</label>
     <InputText id="username" v-model="gameName" class="flex-auto" autocomplete="off" />
   </div>
-  <span class="d-flex justify-end pt-2" style="color:#be0000">{{ globalError }}</span>
+  <span class="d-flex justify-end pt-2 error-color">{{ globalError }}</span>
   <div class="d-flex justify-end pt-2">
     <Button type="button" label="Save" @click="createGame" />
   </div>
 </template>
+
+<style scoped>
+.error-color {
+  color: #f13030
+}
+</style>

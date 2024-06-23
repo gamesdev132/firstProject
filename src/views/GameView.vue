@@ -19,6 +19,16 @@ const SCORES_KEY = 'scores'
 const scoreLength = ref<number>(1)
 const scoreList = ref<Score[]>([])
 
+onMounted(() => {
+  const scores = localStorage.getItem(SCORES_KEY)
+  if (scores) {
+    scoreList.value = JSON.parse(scores)
+    scoreLength.value = scoreList.value[0]?.scores.length || 1
+  } else {
+    initialBasicGame()
+  }
+})
+
 const openAddGameDialog = () => {
   orderList()
   dialog.open(AddGameDialog, {
@@ -41,15 +51,6 @@ const openAddGameDialog = () => {
     }
   })
 }
-onMounted(() => {
-  const scores = localStorage.getItem(SCORES_KEY)
-  if (scores) {
-    scoreList.value = JSON.parse(scores)
-    scoreLength.value = scoreList.value[0]?.scores.length || 1
-  } else {
-    initialBasicGame()
-  }
-})
 
 const canAddTour = computed(() => {
   let bool = true
@@ -121,40 +122,35 @@ watch(scoreList, (newValue) => {
     <DynamicDialog />
     <div class="space">
       <DataTable :value="scoreList" scrollable>
-        <Column field="name" header="Nom" frozen :style="{'z-index': 1}" class="list-background-color">
+        <Column field="name" frozen class="list-background-color z-1">
+          <template #header><span class="list-background-color w-100">Nom</span></template>
           <template #body="slotProps">
-            <InputText type="text" v-model="slotProps.data.name"
-                       :style="{width:'120px'}"
-            />
+            <InputText type="text" v-model="slotProps.data.name" class="w-120" />
           </template>
         </Column>
         <Column v-for="( score, columnIndex ) in scoreLength"
-                :key="columnIndex" field="name"
-                :style="{width:'80px'}"
+                :key="columnIndex" field="name" class="w-80"
         >
           <template #header>
-            <span :style="{width:'50px', 'text-align':'center'}">Tour {{ score }}</span>
+            <span class="w-50 text-center">Tour {{ score }}</span>
           </template>
           <template #body="slotProps">
             <div :style="{ display: 'flex', 'justify-content':'center'}">
               <InputNumber v-model="slotProps.data.scores[columnIndex].val"
-                           :inputStyle="{width:'50px'}"
-                           input-class="space"
+                           inputClass="w-50 space"
                            :max="MAX"
                            :min="MIN"
               />
             </div>
           </template>
         </Column>
-        <Column field="total" header="Total"
-                :style="{width:'80px'}"
-        >
+        <Column field="total" header="Total" class="w-80">
           <template #body="slotProps">
-            <InputNumber v-model="slotProps.data.total" disabled :inputStyle="{width:'60px'}" />
+            <InputNumber v-model="slotProps.data.total" disabled inputClass="w-60" />
           </template>
         </Column>
       </DataTable>
-      <div class="d-flex d-col" :style="{gap:'15px', padding:'20px 10px'}">
+      <div class="d-flex d-col buttons">
         <Button severity="contrast" label="Tour supplémentaire" @click="addColumn" :disabled="!canAddTour"></Button>
         <Button severity="contrast" label="Joueur supplémentaire" @click="addPlayer"></Button>
         <Button severity="contrast" label="Trié la liste" @click="orderList"></Button>
@@ -180,4 +176,31 @@ watch(scoreList, (newValue) => {
 .space {
   padding: 8px;
 }
+
+.w-120 {
+  width: 120px
+}
+
+.w-80 {
+  width: 80px
+}
+
+.w-60 {
+  width: 60px;
+}
+
+.w-50 {
+  width: 50px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.buttons {
+  gap: 15px;
+  padding: 20px 10px;
+}
+
+
 </style>
