@@ -13,7 +13,7 @@ onMounted(async () => {
 
 <template>
   <div v-if="games.length > 0" class="d-flex items-start wrap align-list">
-    <GameScores v-for="game in games" :game="game" :key="game.date" />
+    <GameScores v-for="game in games" :game="game" :key="game.id" />
   </div>
 </template>
 

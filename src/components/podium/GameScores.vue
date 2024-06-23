@@ -6,7 +6,15 @@ const props = defineProps(['game'])
 
 const aleaEmojis = ['🤯', '🤔', '👹', '😴', '😵', '☠️']
 
-const emojis = ['🥇', '🥈', '🥉'].concat(Array(props.game.scores.length - 3).fill(aleaEmojis[Math.floor(Math.random() * 6)]))
+let emojis = ['🥇', '🥈', '🥉']
+
+function getEmoji(index: string): string{
+  const indexNumber = Number(index)
+  if (indexNumber < 3){
+    return emojis[indexNumber]
+  }
+  return aleaEmojis[Math.floor(Math.random() * 6)]
+}
 </script>
 
 <template>
@@ -16,7 +24,7 @@ const emojis = ['🥇', '🥈', '🥉'].concat(Array(props.game.scores.length - 
       <div class="d-flex d-col">
         <span v-for="(score, index) in props.game.scores"
               :key="index">
-          {{ emojis[index] + ' ' + score.name + ' : ' + score.total + ' point' + ((score.total < -1 || score.total > 1) ? 's' : '') }}
+          {{ getEmoji(index.toString()) + ' ' + score.name + ' : ' + score.total + ' point' + ((score.total < -1 || score.total > 1) ? 's' : '') }}
         </span>
       </div>
     </template>

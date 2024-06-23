@@ -1,24 +1,28 @@
 import { db } from '@/firebase'
-import { addDoc, collection, getDocs, query, Timestamp, where, orderBy } from 'firebase/firestore'
+import { addDoc, collection, getDocs, orderBy, query, Timestamp, where } from 'firebase/firestore'
 import type { Game } from '@/interface/game.interface'
-import { getCurrentDateMinusDaysFormatted, getAllTimeStampsInRange } from '@/utils/date.utils'
+import { getAllTimeStampsInRange, getCurrentDateMinusDaysFormatted } from '@/utils/date.utils'
+import type { GamePayload } from '@/payload/game.payload'
 
 const scoreCollection = collection(db, 'score')
 const DATES_SPACE = 5
 
-export async function getGamesFromLastXDays(days= 31): Promise<Game[]> {
+export async function getGamesFromLastXDays(days = 31): Promise<Game[]> {
   const startDate: Timestamp = getCurrentDateMinusDaysFormatted(-days)
   const querySnapshot = await getDocs(query(
     scoreCollection,
     where('date', '>=', startDate),
-    orderBy('date', 'desc'),
+    orderBy('date', 'desc')
   ))
   return querySnapshot.docs.map(doc => (
-    doc.data() as Game
+    {
+      id: doc.id,
+      ...doc.data() as GamePayload,
+    }
   ))
 }
 
-export async function addGame(game: Game) {
+export async function addGame(game: GamePayload) {
   await addDoc(scoreCollection, game)
 }
 
@@ -39,7 +43,7 @@ export async function getAvailableDates() {
   let timeStampList = getAllTimeStampsInRange(startDate, endDate)
   timeStampInDb.forEach((inDb) => {
     timeStampList = timeStampList.filter((item) => item.seconds !== inDb.seconds
-  )
+    )
   })
   return timeStampList
 }
