@@ -11,6 +11,7 @@ import { useDialog } from 'primevue/usedialog'
 import type { DynamicDialogCloseOptions } from 'primevue/dynamicdialogoptions'
 import { computed, onMounted, ref, watch } from 'vue'
 
+
 const dialog = useDialog()
 
 const MAX = 999
@@ -18,6 +19,7 @@ const MIN = -9
 const SCORES_KEY = 'scores'
 const scoreLength = ref<number>(1)
 const scoreList = ref<Score[]>([])
+const averages = ref<number[]>([])
 
 onMounted(() => {
   const scores = localStorage.getItem(SCORES_KEY)
@@ -111,6 +113,19 @@ function deleteNoNamePlayers() {
   scoreList.value = scoreList.value.filter(item => item.name.trim() !== '' && item.scores[0].val !== undefined)
 }
 
+function calculateAverages() {
+  let index = scoreLength.value;
+  averages.value = []
+  while (index > 0){
+    let average = 0
+    scoreList.value.forEach((item) => {
+      average += item.scores[index - 1].val ?? 0
+    })
+    averages.value.unshift(average)
+    index = index -1
+  }
+}
+
 watch(scoreList, (newValue) => {
   newValue.forEach(player => computeTotals(player.id))
   localStorage.setItem(SCORES_KEY, JSON.stringify(scoreList.value))
@@ -150,11 +165,15 @@ watch(scoreList, (newValue) => {
           </template>
         </Column>
       </DataTable>
+      <div v-if="averages.length" class="d-flex justify-end pr-5">
+        Moyennes : {{ averages }}
+      </div>
       <div class="d-flex d-col buttons">
         <Button severity="contrast" label="Tour supplémentaire" @click="addColumn" :disabled="!canAddTour"></Button>
         <Button severity="contrast" label="Joueur supplémentaire" @click="addPlayer"></Button>
         <Button severity="contrast" label="Trié la liste" @click="orderList"></Button>
         <Button severity="contrast" label="Supprimer joueurs sans nom" @click="deleteNoNamePlayers"></Button>
+        <Button severity="contrast" label="Caluculer les moyennes" @click="calculateAverages"></Button>
         <Button severity="contrast" label="Enregistrer les scores" @click="openAddGameDialog"
                 :disabled="!canCreateGame"></Button>
       </div>
@@ -201,6 +220,5 @@ watch(scoreList, (newValue) => {
   gap: 15px;
   padding: 20px 10px;
 }
-
 
 </style>
