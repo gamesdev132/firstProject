@@ -7,6 +7,7 @@ import { addGame, getAvailableDates } from '@/services/score.service'
 import InputMask from 'primevue/inputmask'
 import { convertDateStringToTimestamp, convertDateToFrenchFormat } from '@/utils/date.utils'
 import { Timestamp } from 'firebase/firestore'
+import { isDefaultDatabase } from '@/services/localStorage.service'
 
 const dialogRef = inject<Ref<{
   data: { scoreList: ScoreItem[] },
@@ -23,7 +24,9 @@ onMounted(async () => {
     scoreList.value = dialogRef.value.data.scoreList
   }
   date.value = convertDateToFrenchFormat(new Date())
-  restrictedDates.value = await getDates()
+  if (isDefaultDatabase()) {
+    restrictedDates.value = await getDates()
+  }
 })
 
 async function createGame() {

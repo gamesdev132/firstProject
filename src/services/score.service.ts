@@ -3,8 +3,9 @@ import { addDoc, collection, getDocs, orderBy, query, Timestamp, where } from 'f
 import type { Game } from '@/interface/game.interface'
 import { getAllTimeStampsInRange, getCurrentDateMinusDaysFormatted } from '@/utils/date.utils'
 import type { GamePayload } from '@/payload/game.payload'
+import { getDatabaseGameName } from '@/services/localStorage.service'
 
-const scoreCollection = collection(db, 'score')
+const scoreCollection = collection(db, getDatabaseGameName())
 const DATES_SPACE = 5
 
 export async function getGamesFromLastXDays(days = 31): Promise<Game[]> {
